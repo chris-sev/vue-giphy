@@ -11,11 +11,12 @@
 
   <!-- js -->
   <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-resource"></script>
 </head>
 <body>
   
-  <!-- NAVBAR -->
-  <nav class="navbar is-info">
+  <!-- header ========================= -->
+  <nav class="navbar">
   <div class="container">
     <div class="navbar-brand">
       <a class="navbar-item" href="http://bulma.io">
@@ -32,5 +33,40 @@
   </div>
   </nav>
 
+  <!-- our app ========================= -->
+  <section id="app" class="hero is-info is-fullheight is-bold">
+  <div class="hero-body">
+  <div class="container">
+
+  </div>
+  </div>
+  </section>
+
+  <!-- our vue stuff =================== -->
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        gifs: [
+          { id: 1, author: 'ado', image: '', caption: 'MY MAN' },
+          { id: 1, author: 'chris', image: '', caption: 'FREE MAN' }
+        ]
+      },
+      ready: function() {
+        this.getGifBattle();
+      },
+      methods: {
+        getGifBattle: function() {
+
+        },        
+        voteOnGif: function(battleId, id) {
+          this.$http.post('', { battleId, id })
+            .then((data) => {
+              console.log('wat teh fuck i doign?');
+            });
+        }
+      }
+    });
+  </script>
 </body>
 </html>
