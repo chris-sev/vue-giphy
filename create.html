@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <!-- css -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bowlby+One+SC">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.3/css/bulma.css">
+  <style>
+    .gif-container  {
+      position: relative;
+    }
+
+    .gif-container img  {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    input     {
+      margin-bottom: 15px;
+    }
+
+    .caption  {
+      font-family: 'Bowlby One SC', sans-serif;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 50px;
+      text-align: center;
+      color: #FFF;
+      font-size: 60px;
+      text-transform: uppercase;
+      line-height: 0.5;
+      text-shadow:
+        3px 3px 0 #000,
+        -1px -1px 0 #000,  
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+    }
+  </style>
+
+  <!-- js -->
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-resource"></script>
+</head>
+<body>
+  
+  <!-- header ========================= -->
+  <nav class="navbar">
+  <div class="container">
+      <a class="navbar-item" href="http://bulma.io">
+        <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
+      </a>
+
+      <a class="navbar-item" href="index.html">Vote</a>
+      <a class="navbar-item" href="create.html">Create</a>
+  </div>
+  </nav>
+
+  <!-- our app ========================= -->
+  <section id="app" class="hero is-info is-fullheight is-bold">
+  <div class="hero-body">
+  <div class="container">
+  <div class="columns">
+  <div class="column is-6 is-offset-3">
+
+    <div class="box" v-if="gif">
+      <div class="gif-container">
+        <img v-bind:src="gif.image_original_url">
+        <div class="caption">{{ caption }}</div>
+      </div>
+
+      <input type="text" class="input" v-model="caption">
+
+      <a href="#" class="button is-large is-fullwidth is-success" v-on:click="saveGif">Save</a>
+    </div>
+
+  </div>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <!-- our vue stuff =================== -->
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        gif: null,
+        caption: ''
+      },
+      created: function() {
+        this.getRandomGif();
+      },
+      methods: {
+        getRandomGif: function() {
+          const url = 'https://api.giphy.com/v1/gifs/random?api_key=80bfcbf357864cd18518c324f47a7098';
+          this.$http.get(url)
+              .then(response => this.gif = response.body.data);
+        },        
+        saveGif: function() {
+          const url = '';
+          this.$http.post('', { battleId, id })
+              .then(response => {
+                console.log('wat teh fuck i doign?');
+              });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
