@@ -4,60 +4,153 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Gif Battle!</title>
 
   <!-- css -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bowlby+One+SC">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.3/css/bulma.css">
+  <link rel="stylesheet" href="styles.css">
 
   <!-- js -->
   <script src="https://unpkg.com/vue"></script>
-  <script src="https://unpkg.com/vue-resource"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
 </head>
 <body>
-  
+<div id="app">
   <!-- header ========================= -->
   <nav class="navbar">
   <div class="container">
-    <a class="navbar-item" href="http://bulma.io">
-      <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
+    <a class="navbar-item" href="/">
+      MY GIF BATTLE
     </a>
 
-    <a class="navbar-item" href="index.html">Vote</a>
-    <a class="navbar-item" href="create.html">Create</a>
+    <a class="navbar-item" href="#vote">Vote</a>
+    <a class="navbar-item" href="#create">Create</a>
   </div>
   </nav>
 
-  <!-- our app ========================= -->
-  <section id="app" class="hero is-info is-fullheight is-bold">
-  <div class="hero-body">
+  <!-- our voting app ========================= -->
+  <section id="vote" class="hero is-info is-fullheight is-bold">
+  <div class="hero-body has-text-centered">
   <div class="container">
+
+    <h1 class="title">Fight!</h1>
+
+    <div v-if="!battleGifs" class="notification is-danger">
+      Preparing to Battle!
+    </div>
+
+    <div class="columns" v-if="battleGifs">
+    <div class="column is-half">
+      <div class="box" v-if="battleGifs.gif_one">
+        <div class="gif-container">
+          <img :src="battleGifs.gif_one.gif_url">
+          <div class="caption">{{ battleGifs.gif_one.gif_caption }}</div>
+        </div>
+  
+        <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_one.gif_id)">
+          Vote!
+        </a>
+      </div>
+    </div>
+    <div class="column is-half">
+      <div class="box" v-if="battleGifs.gif_two">
+        <div class="gif-container">
+          <img :src="battleGifs.gif_two.gif_url">
+          <div class="caption">{{ battleGifs.gif_two.gif_caption }}</div>
+        </div>
+  
+        <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_two.gif_id)">
+          Vote!
+        </a>
+      </div>
+    </div>
+    </div>
 
   </div>
   </div>
   </section>
+
+  <!-- our gif creator thing ====================== -->
+  <section id="create" class="hero is-primary is-fullheight is-bold">
+  <div class="hero-body">
+  <div class="container">
+  <div class="columns">
+  <div class="column is-6 is-offset-3">
+
+    <h1 class="title has-text-centered">Create!</h1>
+
+    <div class="box" v-if="randomGif">
+      <div class="gif-container">
+        <a class="refresh" @click="getRandomGif">🔄</a>
+
+        <img :src="randomGif.image_original_url">
+        <div class="caption">{{ caption }}</div>
+      </div>
+
+      <input type="text" class="input" v-model="caption">
+
+      <a href="#" class="button is-large is-fullwidth is-success" @click.prevent="saveGif">Save</a>
+    </div>
+
+  </div>
+  </div>
+  </div>
+  </div>
+  </section>
+
+</div>
 
   <!-- our vue stuff =================== -->
   <script>
     const app = new Vue({
       el: '#app',
       data: {
-        gifs: [
-          { id: 1, author: 'ado', image: '', caption: 'MY MAN' },
-          { id: 1, author: 'chris', image: '', caption: 'FREE MAN' }
-        ]
+        apiUrl:     'https://wt-fbf1133d4c0420e5070f01e86112d679-0.run.webtask.io/gif-battle',
+        battleGifs: null,
+        randomGif:  null,
+        caption:    null
       },
       created: function() {
         this.getGifBattle();
+        this.getRandomGif();
       },
       methods: {
+        // for the gif battle
         getGifBattle: function() {
+          const url = `${this.apiUrl}/battle`;
+          axios.get(url).then(response => this.battleGifs = response.data);
+        },       
 
+        // vote on a certain gif in a battle 
+        voteOnGif: function(gif_id) {
+          console.log(gif_id);
+          const url = `${this.apiUrl}/vote`;
+          axios.post(url, { gif_id })
+            .then(response => {
+              // get another gif battle
+              this.getGifBattle();
+            });
+        },
+
+        // for the gif creator
+        getRandomGif: function() {
+          const url = `${this.apiUrl}/random`;
+          axios.get(url).then(response => this.randomGif = response.data.data);
         },        
-        voteOnGif: function(battleId, id) {
-          this.$http.post('', { battleId, id })
-            .then((data) => {
-              console.log('wat teh fuck i doign?');
+
+        // save the gif + caption that we just created
+        saveGif: function() {
+          const url = `${this.apiUrl}`;
+          axios.post(url, { 
+            gif_id:  this.randomGif.id,
+            gif_url: this.randomGif.image_original_url,
+            caption: this.caption,
+            votes:   0
+          })
+            .then(response => {
+              this.getRandomGif();
+              this.caption = '';
             });
         }
       }
