@@ -5,6 +5,7 @@
 .gif-container img  {
   width: 100%;
   margin-bottom: 15px;
+  height: 300px;
 }
 
 input     {
