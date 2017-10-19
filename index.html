@@ -14,9 +14,10 @@
   <!-- js -->
   <script src="https://unpkg.com/vue"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
-  <script>
-    // axios interceptor
-  </script>
+
+  <!-- authentication -->
+  <script src="https://cdn.auth0.com/js/auth0/8.10.1/auth0.min.js"></script>
+  <script src="auth0.js"></script>
 </head>
 <body>
 <div id="app">
@@ -30,6 +31,9 @@
 
     <a class="navbar-item" href="#vote">Vote</a>
     <a class="navbar-item" href="#create">Create</a>
+
+    <a class="navbar-item" @click="login" v-if="!isLoggedIn">Login</a>
+    <a class="navbar-item" @click="logout" v-if="isLoggedIn">Logout</a>
   </div>
   </nav>
 
@@ -97,7 +101,20 @@
 
       <input type="text" class="input" v-model="caption">
 
-      <a href="#" class="button is-large is-fullwidth is-success" @click.prevent="saveGif">Save</a>
+      <a 
+        href="#" 
+        class="button is-large is-fullwidth is-success" 
+        @click.prevent="saveGif"
+        v-if="isLoggedIn">
+          Create
+      </a>
+
+      <a 
+        class="button is-large is-fullwidth is-success" 
+        @click="login" 
+        v-if="!isLoggedIn">
+          Login to Create
+      </a>
     </div>
 
   </div>
@@ -150,11 +167,15 @@
         battleGifs:  null,
         randomGif:   null,
         caption:     null,
-        leaderboard: null
+        leaderboard: null,
+        isLoggedIn:  false
       },
 
       // lifecycle hook
       created: function() {
+        window.authService.handleAuthentication();
+        this.isLoggedIn = window.authService.isAuthenticated();
+
         this.getGifBattle();
         this.getRandomGif();
         this.getLeaderboard();
@@ -212,7 +233,14 @@
                 .then(response => this.leaderboard = response.data);
         },
 
-        
+        // log the user in
+        login: function() {
+          window.authService.login();
+        },
+
+        logout: function() {
+          window.authService.logout();
+        }
       }
     });
   </script>
