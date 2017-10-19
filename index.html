@@ -18,36 +18,25 @@
   <!-- authentication -->
   <script src="https://cdn.auth0.com/js/auth0/8.10.1/auth0.min.js"></script>
   <script src="auth0.js"></script>
-  <script>
-    axios.interceptors.request.use(
-      config => {
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) 
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        return config;
-      }, 
-      error => Promise.reject(error)
-    );
-  </script>
 </head>
 <body class="has-text-centered">
 <div id="app">
 
-  <!-- header ========================= -->
-  <!-- header ========================= -->
+  <!-- =========================================================== -->
+  <!-- header ==================================================== -->
+  <!-- =========================================================== -->
   <nav class="navbar">
   <div class="container">
-    <a class="navbar-item" href="/">
-      MY GIF BATTLE
-    </a>
+    <a class="navbar-item" href="/">MY GIF BATTLE</a>
 
     <a class="navbar-item" href="#vote">Vote</a>
     <a class="navbar-item" href="#create">Create</a>
   </div>
   </nav>
 
-  <!-- our gif creator thing ====================== -->
-  <!-- our gif creator thing ====================== -->
+  <!-- =========================================================== -->
+  <!-- our gif creator thing ===================================== -->
+  <!-- =========================================================== -->
   <section id="create" class="hero is-primary">
   <div class="container">
     <h1 class="title">Create!</h1>
@@ -58,12 +47,12 @@
       <!-- create the gif here -->
 
     </div>
-
   </div>
   </section>
 
-  <!-- our voting app ========================= -->
-  <!-- our voting app ========================= -->
+  <!-- =========================================================== -->
+  <!-- our voting app ============================================ -->
+  <!-- =========================================================== -->
   <section id="vote" class="hero is-info">
   <div class="container">
     <h1 class="title">Fight!</h1>
@@ -80,7 +69,6 @@
 
     </div>
     </div>
-
   </div>
   </section>
 
@@ -89,6 +77,7 @@
   <section id="leaderboard" class="hero is-dark">
   <div class="container">
     <h1 class="title">Leaderboard!</h1>
+    
     <table class="table is-bordered">
       <thead>
         <tr>
