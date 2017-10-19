@@ -18,10 +18,22 @@
   <!-- authentication -->
   <script src="https://cdn.auth0.com/js/auth0/8.10.1/auth0.min.js"></script>
   <script src="auth0.js"></script>
+  <script>
+    axios.interceptors.request.use(
+      config => {
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) 
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        return config;
+      }, 
+      error => Promise.reject(error)
+    );
+  </script>
 </head>
-<body>
+<body class="has-text-centered">
 <div id="app">
 
+  <!-- header ========================= -->
   <!-- header ========================= -->
   <nav class="navbar">
   <div class="container">
@@ -38,8 +50,9 @@
   </nav>
 
   <!-- our voting app ========================= -->
+  <!-- our voting app ========================= -->
   <section id="vote" class="hero is-info is-fullheight is-bold">
-  <div class="hero-body has-text-centered">
+  <div class="hero-body">
   <div class="container">
 
     <h1 class="title">Fight!</h1>
@@ -50,15 +63,9 @@
 
       <!-- gif one -->
       <div class="box" v-if="battleGifs.gif_one">
-        <div class="gif-container">
-          <img :src="battleGifs.gif_one.url">
-          <div class="caption">{{ battleGifs.gif_one.caption }}</div>
-        </div>
-  
-        <a 
-          class="button is-large is-fullwidth is-warning" 
-          @click="voteOnGif(battleGifs.gif_one.id)">
-            Vote!
+        <super-gif :gif="battleGifs.gif_one.url" :caption="battleGifs.gif_one.caption"></super-gif>
+        <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_one.id)">
+          Vote!
         </a>
       </div>
 
@@ -67,11 +74,7 @@
 
       <!-- gif two -->
       <div class="box" v-if="battleGifs.gif_two">
-        <div class="gif-container">
-          <img :src="battleGifs.gif_two.url">
-          <div class="caption">{{ battleGifs.gif_two.caption }}</div>
-        </div>
-  
+        <super-gif :gif="battleGifs.gif_two.url" :caption="battleGifs.gif_two.caption"></super-gif>
         <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_two.id)">
           Vote!
         </a>
@@ -84,17 +87,17 @@
   </section>
 
   <!-- our gif creator thing ====================== -->
+  <!-- our gif creator thing ====================== -->
   <section id="create" class="hero is-primary is-fullheight is-bold">
   <div class="hero-body">
   <div class="container">
 
-    <h1 class="title has-text-centered">Create!</h1>
+    <h1 class="title">Create!</h1>
 
     <!-- random gif -->
     <div id="gif-creator" class="box" v-if="randomGif">
       <div class="gif-container">
         <a class="refresh" @click="getRandomGif">🔄</a>
-
         <img :src="randomGif.url">
         <div class="caption">{{ caption }}</div>
       </div>
@@ -104,7 +107,7 @@
       <a 
         href="#" 
         class="button is-large is-fullwidth is-success" 
-        @click.prevent="saveGif"
+        @click="saveGif"
         v-if="isLoggedIn">
           Create
       </a>
@@ -121,10 +124,11 @@
   </div>
   </section>
 
-  <!-- leaderboard -->
+  <!-- leaderboard ============================================= -->
+  <!-- leaderboard ============================================= -->
   <section id="leaderboard" class="hero is-dark is-fullheight is-bold">
   <div class="hero-body">
-  <div class="container has-text-centered">
+  <div class="container">
 
     <table class="table is-bordered is-fullwidth" v-if="leaderboard">
       <thead>
@@ -138,10 +142,7 @@
         <tr v-for="(gif, index) in leaderboard">
           <td>{{ index + 1 }}</td>
           <td>
-            <div class="gif-container">
-              <img :src="gif.url" width="200">
-              <div class="caption">{{ gif.caption }}</div>
-            </div>
+            <super-gif :gif="gif.url" :caption="gif.caption" :width="200"></super-gif>
           </td>
           <td>
             {{ gif.votes }}
@@ -158,16 +159,34 @@
 
   <!-- our vue stuff =================== -->
   <script>
+    Vue.component('super-gif', {
+      props: ['gif', 'caption', 'width'],
+      template: `
+        <div class="gif-container">
+          <img :src="gif" :width="width">
+          <div class="caption">{{ caption }}</div>
+        </div>
+      `
+    });
+
     const app = new Vue({
       el: '#app',
 
       // our properties
       data: {
         apiUrl:     'https://wt-fbf1133d4c0420e5070f01e86112d679-0.run.webtask.io/gif-battle',
-        battleGifs:  null,
+
+        // part 1
         randomGif:   null,
         caption:     null,
+
+        // part 2
+        battleGifs:  null,
+
+        // part 3
         leaderboard: null,
+
+        // authentication
         isLoggedIn:  false
       },
 
@@ -176,8 +195,8 @@
         window.authService.handleAuthentication();
         this.isLoggedIn = window.authService.isAuthenticated();
 
-        this.getGifBattle();
         this.getRandomGif();
+        this.getGifBattle();
         this.getLeaderboard();
       },
 
@@ -185,36 +204,25 @@
       methods: {
         // for the gif battle
         getGifBattle: function() {
-          const url = `${this.apiUrl}/battle`;
-          axios.get(url)
-                .then(response => {
-                  console.log(response.data);
-                  this.battleGifs = response.data
-                });
+          axios.get(`${this.apiUrl}/battle`)
+                .then(response => this.battleGifs = response.data);
         },       
 
         // vote on a certain gif in a battle 
         voteOnGif: function(id) {
-          const url = `${this.apiUrl}/vote`;
-          axios.post(url, { id })
-                .then(response => {
-                  // get another gif battle
-                  this.getGifBattle();
-                });
+          axios.post(`${this.apiUrl}/vote`, { id })
+                .then(response => this.getGifBattle());
         },
 
         // for the gif creator
         getRandomGif: function() {
-          const url = `${this.apiUrl}/random`;
-          axios.get(url)
+          axios.get(`${this.apiUrl}/random`)
                 .then(response => this.randomGif = response.data);
         },        
 
         // save the gif + caption that we just created
         saveGif: function() {
-          const url = `${this.apiUrl}`;
-
-          axios.post(url, {
+          axios.post(this.apiUrl, {
             id:      this.randomGif.id,
             url:     this.randomGif.image_original_url,
             caption: this.caption,

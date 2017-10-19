@@ -1,5 +1,6 @@
 .gif-container  {
   position: relative;
+  text-align: center;
 }
 
 #vote .gif-container img {
@@ -8,7 +9,7 @@
 }
 
 .gif-container img  {
-  margin-bottom: 15px;
+  margin: 0 auto 15px;
 }
 
 input     {
