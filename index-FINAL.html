@@ -51,20 +51,21 @@
 
   <!-- our voting app ========================= -->
   <!-- our voting app ========================= -->
-  <section id="vote" class="hero is-info is-fullheight is-bold">
-  <div class="hero-body">
+  <section id="vote" class="hero is-info">
   <div class="container">
 
     <h1 class="title">Fight!</h1>
-    <div v-if="!battleGifs" class="notification is-danger">Preparing to Battle!</div>
 
     <div class="columns" v-if="battleGifs">
     <div class="column is-half">
 
       <!-- gif one -->
       <div class="box" v-if="battleGifs.gif_one">
-        <super-gif :gif="battleGifs.gif_one.url" :caption="battleGifs.gif_one.caption"></super-gif>
-        <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_one.id)">
+        <super-gif 
+          :gif="battleGifs.gif_one.url" :caption="battleGifs.gif_one.caption">
+        </super-gif>
+        
+        <a class="button is-large is-warning" @click="voteOnGif(battleGifs.gif_one.id)">
           Vote!
         </a>
       </div>
@@ -74,22 +75,26 @@
 
       <!-- gif two -->
       <div class="box" v-if="battleGifs.gif_two">
-        <super-gif :gif="battleGifs.gif_two.url" :caption="battleGifs.gif_two.caption"></super-gif>
-        <a class="button is-large is-fullwidth is-warning" @click="voteOnGif(battleGifs.gif_two.id)">
-          Vote!
+        <super-gif 
+          :gif="battleGifs.gif_two.url" 
+          :caption="battleGifs.gif_two.caption">
+        </super-gif>
+
+        <a 
+          class="button is-large is-warning" 
+          @click="voteOnGif(battleGifs.gif_two.id)">
+            Vote!
         </a>
       </div>
     </div>
     </div>
 
   </div>
-  </div>
   </section>
 
   <!-- our gif creator thing ====================== -->
   <!-- our gif creator thing ====================== -->
-  <section id="create" class="hero is-primary is-fullheight is-bold">
-  <div class="hero-body">
+  <section id="create" class="hero is-primary">
   <div class="container">
 
     <h1 class="title">Create!</h1>
@@ -106,14 +111,14 @@
 
       <a 
         href="#" 
-        class="button is-large is-fullwidth is-success" 
+        class="button is-large is-success" 
         @click="saveGif"
         v-if="isLoggedIn">
           Create
       </a>
 
       <a 
-        class="button is-large is-fullwidth is-success" 
+        class="button is-large is-success" 
         @click="login" 
         v-if="!isLoggedIn">
           Login to Create
@@ -121,16 +126,14 @@
     </div>
 
   </div>
-  </div>
   </section>
 
   <!-- leaderboard ============================================= -->
   <!-- leaderboard ============================================= -->
-  <section id="leaderboard" class="hero is-dark is-fullheight is-bold">
-  <div class="hero-body">
+  <section id="leaderboard" class="hero is-dark">
   <div class="container">
 
-    <table class="table is-bordered is-fullwidth" v-if="leaderboard">
+    <table class="table is-bordered" v-if="leaderboard">
       <thead>
         <tr>
           <th>Rank</th>
@@ -151,7 +154,6 @@
       </tbody>
     </table>
 
-  </div>
   </div>
   </section>
 
