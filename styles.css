@@ -2,10 +2,13 @@
   position: relative;
 }
 
-.gif-container img  {
-  width: 100%;
-  margin-bottom: 15px;
+#vote .gif-container img {
   height: 300px;
+  width: 100%;
+}
+
+.gif-container img  {
+  margin-bottom: 15px;
 }
 
 input     {
@@ -36,4 +39,14 @@ input     {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+#gif-creator {
+  max-width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#leaderboard .caption {
+  font-size: 12px;
 }

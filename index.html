@@ -83,13 +83,11 @@
   <section id="create" class="hero is-primary is-fullheight is-bold">
   <div class="hero-body">
   <div class="container">
-  <div class="columns">
-  <div class="column is-6 is-offset-3">
 
     <h1 class="title has-text-centered">Create!</h1>
 
     <!-- random gif -->
-    <div class="box" v-if="randomGif">
+    <div id="gif-creator" class="box" v-if="randomGif">
       <div class="gif-container">
         <a class="refresh" @click="getRandomGif">🔄</a>
 
@@ -104,6 +102,37 @@
 
   </div>
   </div>
+  </section>
+
+  <!-- leaderboard -->
+  <section id="leaderboard" class="hero is-dark is-fullheight is-bold">
+  <div class="hero-body">
+  <div class="container has-text-centered">
+
+    <table class="table is-bordered is-fullwidth" v-if="leaderboard">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Gif</th>
+          <th>Votes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(gif, index) in leaderboard">
+          <td>{{ index + 1 }}</td>
+          <td>
+            <div class="gif-container">
+              <img :src="gif.url" width="200">
+              <div class="caption">{{ gif.caption }}</div>
+            </div>
+          </td>
+          <td>
+            {{ gif.votes }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
   </div>
   </div>
   </section>
@@ -118,15 +147,17 @@
       // our properties
       data: {
         apiUrl:     'https://wt-fbf1133d4c0420e5070f01e86112d679-0.run.webtask.io/gif-battle',
-        battleGifs: null,
-        randomGif:  null,
-        caption:    null
+        battleGifs:  null,
+        randomGif:   null,
+        caption:     null,
+        leaderboard: null
       },
 
       // lifecycle hook
       created: function() {
         this.getGifBattle();
         this.getRandomGif();
+        this.getLeaderboard();
       },
 
       // application methods
@@ -172,7 +203,16 @@
               this.getRandomGif();
               this.caption = '';
             });
-        }
+        },
+        
+        // get the leaderboard 
+        getLeaderboard: function() {
+          const url = `${this.apiUrl}/leaderboard`;
+          axios.get(url)
+                .then(response => this.leaderboard = response.data);
+        },
+
+        
       }
     });
   </script>
