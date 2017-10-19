@@ -132,7 +132,7 @@
   <!-- leaderboard ============================================= -->
   <section id="leaderboard" class="hero is-dark">
   <div class="container">
-
+    <h1 class="title">Leaderboard!</h1>
     <table class="table is-bordered" v-if="leaderboard">
       <thead>
         <tr>
@@ -204,18 +204,6 @@
 
       // application methods
       methods: {
-        // for the gif battle
-        getGifBattle: function() {
-          axios.get(`${this.apiUrl}/battle`)
-                .then(response => this.battleGifs = response.data);
-        },       
-
-        // vote on a certain gif in a battle 
-        voteOnGif: function(id) {
-          axios.post(`${this.apiUrl}/vote`, { id })
-                .then(response => this.getGifBattle());
-        },
-
         // for the gif creator
         getRandomGif: function() {
           axios.get(`${this.apiUrl}/random`)
@@ -234,6 +222,18 @@
               this.getRandomGif();
               this.caption = '';
             });
+        },
+        
+        // for the gif battle
+        getGifBattle: function() {
+          axios.get(`${this.apiUrl}/battle`)
+                .then(response => this.battleGifs = response.data);
+        },       
+
+        // vote on a certain gif in a battle 
+        voteOnGif: function(id) {
+          axios.post(`${this.apiUrl}/vote`, { id })
+                .then(response => this.getGifBattle());
         },
         
         // get the leaderboard 
